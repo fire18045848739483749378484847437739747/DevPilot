@@ -505,6 +505,7 @@
                 <a href="#recursos">Recursos</a>
                 <a href="#instalacao">Instalação</a>
                 <a href="#agente">Agente</a>
+                <a href="#comandos">Comandos</a>
                 <a href="#licenca">Licença</a>
                 @if ($repository)
                     <a href="{{ $repository }}" target="_blank" rel="noopener noreferrer">GitHub</a>
@@ -536,16 +537,17 @@
                     <span class="tdot" style="background:#28c840"></span>
                     <span class="terminal-title">powershell — {{ $project['name'] }}</span>
                 </div>
-                <pre><span class="c-prompt">PS&gt;</span> php artisan serve --host=192.168.0.11 --port=8000
-<span class="c-muted">  Iniciando serviço "DEV_meu-projeto"...</span>
-<span class="c-cyan">  INFO</span>  Server running on [http://192.168.0.11:8000]
+                <pre><span class="c-prompt">PS&gt;</span> php artisan agent:install
+<span class="c-cyan">  OK</span>    Agente registrado no Agendador de Tarefas (sobe no logon).
 
-<span class="c-prompt">PS&gt;</span> php artisan services:agent
-<span class="c-muted">  Supervisionando 4 serviços (heartbeat 5s)</span>
-<span class="c-cyan">  OK</span>    DEV_meu-projeto      pid=14880  cpu=0.4%   mem=74.4 MB  :8000 <span class="c-prompt">aberta</span>
-<span class="c-cyan">  OK</span>    API_Interna     pid=15012  cpu=1.2%   mem=52.1 MB  :8001 <span class="c-prompt">aberta</span>
-<span class="c-warn">  WARN</span>  Worker_Queue    caiu — reiniciando (1 de 5)...
-<span class="c-cyan">  OK</span>    Worker_Queue    pid=15340  cpu=0.1%   mem=38.7 MB</pre>
+<span class="c-prompt">PS&gt;</span> php artisan agent:status
+<span class="c-muted">  Supervisionando o grupo "meu-projeto" (4 serviços)</span>
+<span class="c-cyan">  OK</span>    meu-projeto — Web        pid=14880  cpu=0.4%  mem=74.4 MB  :8000 <span class="c-prompt">saudável</span>
+<span class="c-cyan">  OK</span>    meu-projeto — Fila       pid=15012  cpu=1.2%  mem=52.1 MB
+<span class="c-cyan">  OK</span>    meu-projeto — Agendador  pid=15118  cpu=0.0%  mem=41.3 MB
+<span class="c-warn">  WARN</span>  API_Interna              :8001 aberta, mas respondeu <span class="c-warn">500</span>
+<span class="c-warn">  WARN</span>  API_Interna              caiu — reiniciando (1 de 5)...
+<span class="c-cyan">  OK</span>    API_Interna              pid=15340  cpu=0.1%  mem=38.7 MB  :8001 <span class="c-prompt">saudável</span></pre>
             </div>
         </div>
 
@@ -579,6 +581,34 @@
                     </article>
 
                     <article class="card">
+                        <div class="icon">⚙️</div>
+                        <h3>Agente como serviço</h3>
+                        <p>Um comando registra o agente no Windows — Agendador de Tarefas ou NSSM. Chega de depender de
+                            um terminal aberto.</p>
+                    </article>
+
+                    <article class="card">
+                        <div class="icon">🧱</div>
+                        <h3>Grupos de serviços</h3>
+                        <p>Suba ou derrube um stack inteiro — app, fila, agendador, Vite — na ordem de dependência
+                            certa.</p>
+                    </article>
+
+                    <article class="card">
+                        <div class="icon">❤️</div>
+                        <h3>Health check HTTP</h3>
+                        <p>Porta aberta não significa aplicação de pé. O DevPilot bate na URL e compara o status
+                            esperado.</p>
+                    </article>
+
+                    <article class="card">
+                        <div class="icon">🔔</div>
+                        <h3>Alertas</h3>
+                        <p>Notificação quando um serviço cai, estoura o limite de reinícios ou passa do teto de
+                            CPU/memória.</p>
+                    </article>
+
+                    <article class="card">
                         <div class="icon">🔌</div>
                         <h3>Mapa de portas</h3>
                         <p>Veja de relance quais portas estão livres, ocupadas por um serviço ou por um processo
@@ -587,16 +617,23 @@
 
                     <article class="card">
                         <div class="icon">📁</div>
-                        <h3>Seletor de pastas</h3>
-                        <p>Navegue pelos projetos do servidor em vez de digitar caminhos — restrito às raízes que você
-                            definir.</p>
+                        <h3>Detecção de projeto</h3>
+                        <p>Escolha a pasta: o comando, o nome e uma porta livre são preenchidos sozinhos para projetos
+                            Laravel e Node.</p>
+                    </article>
+
+                    <article class="card">
+                        <div class="icon">🌐</div>
+                        <h3>Localhost ou rede local</h3>
+                        <p>Alterne entre <code class="inline">127.0.0.1</code>, o IP da máquina (detectado
+                            automaticamente) e <code class="inline">0.0.0.0</code>.</p>
                     </article>
 
                     <article class="card">
                         <div class="icon">📜</div>
-                        <h3>Logs em tempo real</h3>
-                        <p>Acompanhe stdout e stderr direto no navegador, com destaque de erros e limpeza com um clique.
-                        </p>
+                        <h3>Logs pesquisáveis</h3>
+                        <p>Console ao vivo, mais histórico no banco com nível, busca e filtro. Rotação automática dos
+                            arquivos.</p>
                     </article>
 
                     <article class="card">
@@ -624,8 +661,9 @@
                 <ol class="steps">
                     <li>
                         <strong>Clone e instale as dependências</strong>
-                        <pre class="block">{{ $repository ? 'git clone ' . $repository : 'git clone <url-do-repositorio>' }}
-cd {{ \Illuminate\Support\Str::slug($project['name']) }}
+                        {{-- A pasta criada pelo clone é o nome do repositório, não o slug do projeto. --}}
+                        <pre class="block">{{ $repository ? 'git clone ' . $repository . '.git' : 'git clone <url-do-repositorio>' }}
+cd {{ $repository ? basename($repository) : \Illuminate\Support\Str::slug($project['name']) }}
 composer install</pre>
                     </li>
 
@@ -667,23 +705,79 @@ php artisan make:filament-user</pre>
             <div class="wrap">
                 <h2>Agente de supervisão</h2>
                 <p class="section-lead">
-                    O painel monitora os processos sozinho. O agente é necessário apenas para
-                    <strong>reinício automático</strong> e para <strong>iniciar serviços no boot</strong>.
+                    O painel monitora os processos sozinho. O agente cuida do que só acontece em segundo plano:
+                    <strong>reinício automático</strong>, <strong>iniciar serviços no boot</strong> e manter
+                    isso funcionando com o navegador fechado.
                 </p>
 
-                <pre class="block"><span class="c-muted"># loop contínuo (deixe rodando em segundo plano)</span>
-php artisan services:agent
+                <p style="color:var(--text);font-size:0.95rem;margin:0 0 .5rem"><strong>Registre no Windows e
+                        esqueça:</strong></p>
 
-<span class="c-muted"># um único ciclo — útil no Agendador de Tarefas do Windows</span>
-php artisan services:agent --once
+                <pre class="block"><span class="c-muted"># Agendador de Tarefas, sobe no seu logon (precisa de terminal como administrador)</span>
+php artisan agent:install
 
-<span class="c-muted"># intervalo personalizado, em segundos</span>
-php artisan services:agent --interval=5</pre>
+<span class="c-muted"># alternativas</span>
+php artisan agent:install --method=nssm    <span class="c-muted"># serviço do Windows via NSSM</span>
+php artisan agent:install --trigger=boot   <span class="c-muted"># antes do login, como SYSTEM</span>
+
+<span class="c-muted"># situação, controle e remoção</span>
+php artisan agent:status
+php artisan agent:control start
+php artisan agent:uninstall</pre>
 
                 <p style="color:var(--muted);font-size:0.9rem;margin-top:1.25rem">
-                    Para que ele sobreviva a reinicializações, registre-o como serviço do Windows
-                    (NSSM) ou como Tarefa Agendada disparada no logon.
+                    Tudo isso também está na página <strong>Agente</strong> do painel, que mostra o estado do
+                    registro, o último heartbeat e — quando o painel não está elevado — o comando pronto para copiar.
                 </p>
+
+                <p style="color:var(--text);font-size:0.95rem;margin:2rem 0 .5rem"><strong>Ou rode
+                        manualmente:</strong></p>
+
+                <pre class="block">php artisan services:agent               <span class="c-muted"># loop contínuo</span>
+php artisan services:agent --once        <span class="c-muted"># um único ciclo</span>
+php artisan services:agent --interval=5  <span class="c-muted"># intervalo em segundos</span></pre>
+            </div>
+        </section>
+
+        <section id="comandos">
+            <div class="wrap">
+                <h2>Comandos do projeto</h2>
+                <p class="section-lead">
+                    Rode <code class="inline">migrate</code>, <code class="inline">optimize:clear</code>,
+                    <code class="inline">filament:upgrade</code>, <code class="inline">npm run build</code> e outros
+                    direto na pasta do projeto, sem sair do painel.
+                </p>
+
+                <div class="grid">
+                    <article class="card">
+                        <div class="icon">🎯</div>
+                        <h3>Filtrado pela pasta</h3>
+                        <p>Projeto sem Filament não vê <code class="inline">filament:upgrade</code>; sem
+                            <code class="inline">package.json</code> não vê <code class="inline">npm run build</code>.
+                        </p>
+                    </article>
+
+                    <article class="card">
+                        <div class="icon">🛡️</div>
+                        <h3>Catálogo fechado</h3>
+                        <p>O painel executa apenas o que está em configuração. Não existe campo de linha de comando
+                            livre.</p>
+                    </article>
+
+                    <article class="card">
+                        <div class="icon">⚠️</div>
+                        <h3>Destrutivos protegidos</h3>
+                        <p><code class="inline">migrate:fresh</code> e companhia ficam escondidos atrás de um botão e
+                            ainda pedem confirmação.</p>
+                    </article>
+
+                    <article class="card">
+                        <div class="icon">🎛️</div>
+                        <h3>Banco certo, sempre</h3>
+                        <p>A execução herda o ambiente limpo dos serviços: o <code class="inline">migrate</code> roda
+                            contra o banco <strong>do projeto</strong>.</p>
+                    </article>
+                </div>
             </div>
         </section>
 

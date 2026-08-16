@@ -205,12 +205,12 @@ return [
     */
 
     'project' => [
-        'name' => env('PROJECT_NAME', 'Gerenciador de Processos'),
+        'name' => env('PROJECT_NAME', 'DevPilot'),
         'tagline' => env(
             'PROJECT_TAGLINE',
             'Painel web para iniciar, parar e monitorar processos de desenvolvimento no Windows.'
         ),
-        'repository' => env('PROJECT_REPOSITORY', ''),
+        'repository' => env('PROJECT_REPOSITORY', 'https://github.com/EudesSA/DevPilot'),
         'author' => env('PROJECT_AUTHOR', 'EudesSA - ProezaTech'),
         'website' => env('PROJECT_WEBSITE', 'https://www.proezatech.com'),
         'license' => 'MIT',
