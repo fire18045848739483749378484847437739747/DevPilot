@@ -1,0 +1,238 @@
+/*
+ * Tema "hacker"/terminal para o Gerenciador de Processos.
+ *
+ * CSS estático registrado via FilamentAsset — não exige build do Vite/npm.
+ * Trabalha por cima do tema escuro do Filament, ajustando cores, tipografia
+ * monoespaçada e alguns detalhes de terminal (scanline, glow, prompt).
+ */
+
+:root {
+    --hk-bg: #0a0f0d;
+    --hk-panel: #0f1613;
+    --hk-border: #1c2b24;
+    --hk-green: #22c55e;
+    --hk-green-dim: #16a34a;
+    --hk-text: #c8facc;
+    --hk-muted: #6b8f7a;
+    --hk-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace,
+        SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ---------------------------------------------------------------- base --- */
+
+.fi-body.fi-theme-dark,
+.dark .fi-body {
+    background-color: var(--hk-bg);
+    background-image:
+        radial-gradient(ellipse at top, rgba(34, 197, 94, 0.06), transparent 55%),
+        linear-gradient(rgba(34, 197, 94, 0.014) 50%, transparent 50%);
+    background-size: 100% 100%, 100% 3px;
+}
+
+.dark .fi-main,
+.dark .fi-sidebar,
+.dark .fi-topbar > nav {
+    font-feature-settings: 'ss01', 'cv01';
+}
+
+/* Tipografia monoespaçada nos elementos "de máquina". */
+.dark .fi-ta-text-item-label,
+.dark .fi-badge,
+.dark .fi-in-text .fi-in-text-item-label,
+.dark .fi-wi-stats-overview-stat-value {
+    font-family: var(--hk-mono);
+    font-variant-ligatures: none;
+}
+
+/* ------------------------------------------------------------- sidebar --- */
+
+.dark .fi-sidebar {
+    background-color: var(--hk-panel);
+    border-right: 1px solid var(--hk-border);
+}
+
+.dark .fi-sidebar-item-active .fi-sidebar-item-button {
+    background-color: rgba(34, 197, 94, 0.12);
+    box-shadow: inset 2px 0 0 var(--hk-green);
+}
+
+.dark .fi-sidebar-item-button:hover {
+    background-color: rgba(34, 197, 94, 0.07);
+}
+
+/* Marca com cara de prompt de terminal. */
+.dark .fi-logo,
+.dark .fi-sidebar-header .fi-logo {
+    font-family: var(--hk-mono);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--hk-green);
+    text-shadow: 0 0 12px rgba(34, 197, 94, 0.45);
+}
+
+.dark .fi-logo::before {
+    content: '>_ ';
+    color: var(--hk-green-dim);
+}
+
+/* -------------------------------------------------------------- topbar --- */
+
+.dark .fi-topbar > nav {
+    background-color: rgba(15, 22, 19, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--hk-border);
+}
+
+/* ------------------------------------------------- cards / seções / tabela */
+
+.dark .fi-section,
+.dark .fi-wi-stats-overview-stat,
+.dark .fi-ta-ctn,
+.dark .fi-modal-window {
+    background-color: var(--hk-panel);
+    border: 1px solid var(--hk-border);
+}
+
+.dark .fi-wi-stats-overview-stat {
+    position: relative;
+    overflow: hidden;
+    transition: border-color 150ms ease, transform 150ms ease;
+}
+
+.dark .fi-wi-stats-overview-stat:hover {
+    border-color: rgba(34, 197, 94, 0.45);
+    transform: translateY(-1px);
+}
+
+/* Filete superior nos cards de estatística. */
+.dark .fi-wi-stats-overview-stat::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(34, 197, 94, 0.65),
+        transparent
+    );
+}
+
+.dark .fi-wi-stats-overview-stat-value {
+    color: var(--hk-text);
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.28);
+}
+
+.dark .fi-ta-header-cell {
+    background-color: rgba(34, 197, 94, 0.05);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.7rem;
+}
+
+.dark .fi-ta-row:hover {
+    background-color: rgba(34, 197, 94, 0.05);
+}
+
+/* ---------------------------------------------------------- formulários --- */
+
+.dark .fi-input,
+.dark .fi-select-input,
+.dark .fi-fo-textarea textarea {
+    font-family: var(--hk-mono);
+    background-color: #0b110f;
+    border-color: var(--hk-border);
+}
+
+.dark .fi-input:focus,
+.dark .fi-select-input:focus {
+    border-color: var(--hk-green);
+    box-shadow: 0 0 0 1px var(--hk-green), 0 0 14px rgba(34, 197, 94, 0.2);
+}
+
+/* --------------------------------------------------------------- logs ---- */
+
+/* Visor de logs com cara de console. */
+.hk-console {
+    font-family: var(--hk-mono);
+    font-size: 0.78rem;
+    line-height: 1.55;
+    background: #070b09;
+    color: var(--hk-text);
+    border: 1px solid var(--hk-border);
+    border-radius: 0.5rem;
+    padding: 0.85rem 1rem;
+    max-height: 26rem;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.hk-console::selection,
+.hk-console *::selection {
+    background: rgba(34, 197, 94, 0.3);
+}
+
+.hk-console-line-stderr {
+    color: #fca5a5;
+}
+
+.hk-console-line-system {
+    color: #7dd3fc;
+}
+
+.hk-console-empty {
+    color: var(--hk-muted);
+    font-style: italic;
+}
+
+/* ------------------------------------------------------- responsividade --- */
+
+@media (max-width: 1024px) {
+    .dark .fi-wi-stats-overview-stat-value {
+        font-size: 1.35rem;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Widgets de estatística em coluna única no celular. */
+    .fi-wi-stats-overview .fi-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .fi-wi-stats-overview-stat-value {
+        font-size: 1.5rem;
+    }
+
+    /* Ações do cabeçalho quebram linha em vez de estourar a largura. */
+    .fi-header-ctn .fi-ac {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .fi-header-heading {
+        font-size: 1.25rem;
+        word-break: break-word;
+    }
+
+    /* Tabela rola horizontalmente em vez de espremer as colunas. */
+    .fi-ta-ctn {
+        overflow-x: auto;
+    }
+
+    .hk-console {
+        font-size: 0.7rem;
+        max-height: 18rem;
+    }
+}
+
+/* Respeita quem prefere menos movimento. */
+@media (prefers-reduced-motion: reduce) {
+    .dark .fi-wi-stats-overview-stat {
+        transition: none;
+    }
+
+    .dark .fi-wi-stats-overview-stat:hover {
+        transform: none;
+    }
+}
